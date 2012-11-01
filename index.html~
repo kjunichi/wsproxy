@@ -1,0 +1,55 @@
+<html>
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+function startLanProxy() {
+var wanIpAddress = 'http://' + document.getElementById("wanIpAddress").value
++':8123';
+// フロント側のHttpProxyサーバから
+	var socket = io.connect('http://169.254.128.154:8000/');
+        
+    // WS->HttpProxyサーバ
+    //var proxy = io.connect('http://118.153.61.84:8123');
+    var proxy = io.connect(wanIpAddress);
+    
+  	socket.on('httptows', function (data) {
+    	console.log("to proxy : " + data);
+    	proxy.emit('wstohttp', data);
+  	});
+  
+  	// WS->HttpProxyサーバからの応答
+  	proxy.on('httptows', function (data) {
+        console.log("from proxy : " + data);
+        socket.emit('wstohttp', data );
+  	});
+  
+  	// WS->HttpProxyサーバからの応答(切断)
+  	proxy.on('httpend', function (data) {
+    	console.log("from proxy end ");
+        socket.emit('httpend', data );
+	});
+  
+  
+  	proxy.on('end', function (data) {
+    	proxy = io.connect('');
+  	});
+  	socket.on('end', function (data) {
+    	socket = io.connect('http://169.254.128.154:8000');
+  	});
+  	
+  	//socket.on('disconnect' function() {
+  	//	console.log("client close");
+  	//});
+  	//proxy.on('disconnect', function() {
+  	//	console.log("proxy close");
+  	//});
+  	console.log("start!");
+  	console.log("wanIpAddress = " + wanIpAddress);
+}
+</script>
+</head>
+<body>
+<input type="text" id="wanIpAddress">
+<button onClick="startLanProxy();">start</button>
+</body>
+</html>

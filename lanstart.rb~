@@ -1,0 +1,12 @@
+#!/usr/bin/ruby
+# -*- coding: euc-jp -*-
+
+#IPアドレスを取得する
+result=`ipconfig getifaddr en0`
+
+#取得したIPアドレスに置き換えてindex.htmlを生成する。
+open("index.html","w"){ |o|
+	open("index.html.template").each{ |line|
+			o.puts line.gsub("<<LAN_IP_ADDRESS>>",result.chomp)
+	}
+}
