@@ -8,7 +8,7 @@ function startLanProxy() {
 var wanIpAddress = 'http://' + document.getElementById("wanIpAddress").value
 +':8123';
 // フロント側のHttpProxyサーバから
-	var socket = io.connect('http://192.168.0.12:8000/');
+	var socket = io.connect('http://192.168.0.5:8001/');
         
     // WS->HttpProxyサーバ
     //var proxy = io.connect('http://118.153.61.84:8123');
@@ -36,7 +36,7 @@ var wanIpAddress = 'http://' + document.getElementById("wanIpAddress").value
     	proxy = io.connect('');
   	});
   	socket.on('end', function (data) {
-    	socket = io.connect('http://192.168.0.12:8000');
+    	socket = io.connect('http://192.168.0.5:8000');
   	});
   	
   	//socket.on('disconnect' function() {
@@ -55,7 +55,7 @@ var wanIpAddress = 'http://' + document.getElementById("wanIpAddress").value
 <input type="text" id="wanIpAddress">
 <br>
 <label>LAN側のクライアントに設定するHttpProxyのIPアドレス</label>
-<input type="text" id="lanIpAddress" value="192.168.0.12">
+<input type="text" id="lanIpAddress" value="192.168.0.5">
 
 <button onClick="startLanProxy();">start</button>
 </body>

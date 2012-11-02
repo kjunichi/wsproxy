@@ -1,8 +1,8 @@
 // myproxy4.js
-// HttpProxy‚Æ‚µ‚Ä—v‹‚ğó‚¯‚ÄAWebSocket‚É‚µ‚Ä—v‹‚ğ“]‘—‚·‚éB
-// WebSocket‚©‚ç‰“š‚ğó‚¯‚ÄAHttpProxy‚É“]‘—‚·‚éB
+// HttpProxyã¨ã—ã¦è¦æ±‚ã‚’å—ã‘ã¦ã€WebSocketã«ã—ã¦è¦æ±‚ã‚’è»¢é€ã™ã‚‹ã€‚
+// WebSocketã‹ã‚‰å¿œç­”ã‚’å—ã‘ã¦ã€HttpProxyã«è»¢é€ã™ã‚‹ã€‚
 
-// —áŠO‚ª”­¶‚µ‚Ä‚àƒT[ƒrƒX‚ğ’â~‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+// ä¾‹å¤–ãŒç™ºç”Ÿã—ã¦ã‚‚ã‚µãƒ¼ãƒ“ã‚¹ã‚’åœæ­¢ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 process.on('uncaughtException', function(err) {
 	console.log(err.stack);
 });
@@ -10,7 +10,7 @@ process.on('uncaughtException', function(err) {
 var app = require('http').createServer(handler), io = require('socket.io')
 		.listen(app), fs = require('fs')
 
-app.listen(80);
+app.listen(8001);
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function(err, data) {
@@ -39,20 +39,20 @@ io.sockets.on('connection', function(wsclient) {
 });
 
 function doProxy(wsclient) {
-	// HttpProxy‚ğŠJn‚·‚éB
+	// HttpProxyã‚’é–‹å§‹ã™ã‚‹ã€‚
 	var port = 8081;
 	var sys = require('util');
 	var net = require('net');
 
 	var server = net.createServer(function(webBrowser) {
 		count++;
-		// Ú‘±‚µ‚Ä‚«‚½ƒuƒ‰ƒEƒU‚Ìƒ\ƒPƒbƒg‚ğ•Û‚·‚éB
+		// æ¥ç¶šã—ã¦ããŸãƒ–ãƒ©ã‚¦ã‚¶ã®ã‚½ã‚±ãƒƒãƒˆã‚’ä¿æŒã™ã‚‹ã€‚
 		webClients[count] = webBrowser;
 		webBrowser.wid = count;
 
 		console.log('web client connected [' + count + "]");
 
-		// ƒNƒ‰ƒCƒAƒ“ƒg‚©‚çƒf[ƒ^‚ğó‚¯‚½ê‡
+		// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å—ã‘ãŸå ´åˆ
 		webBrowser.on('data', function(data) {
 			webBrowser.pause();
 			var parseheader = data.toString().split(/\n/);
@@ -64,7 +64,7 @@ function doProxy(wsclient) {
 				console.log("client send ");
 			}
 
-			// Base64‰»‚µ‚ÄWS->HttpProxy‚Ö‘—‚é
+			// Base64åŒ–ã—ã¦WS->HttpProxyã¸é€ã‚‹
 			//console.log("to ws : " + data.toString('base64'));
 			wsclient.emit('httptows', {
 				httpdata : data.toString('base64'),
@@ -74,7 +74,7 @@ function doProxy(wsclient) {
 		});
 
 		webBrowser.on('end', function() {
-			// ƒuƒ‰ƒEƒU‚ÌÚ‘±‚ªØ’f‚³‚ê‚½ê‡‚Ìˆ—
+			// ãƒ–ãƒ©ã‚¦ã‚¶ã®æ¥ç¶šãŒåˆ‡æ–­ã•ã‚ŒãŸå ´åˆã®å‡¦ç†
 			console.log('client disconnected[' + webBrowser.wid + ']');
 			wsclient.emit('httpend', {
 				wid : webBrowser.wid
@@ -84,7 +84,7 @@ function doProxy(wsclient) {
 
 		webBrowser.on('close',
 				function() {
-					// ƒuƒ‰ƒEƒU‚ÌÚ‘±‚ªØ’f‚³‚ê‚½ê‡‚Ìˆ—
+					// ãƒ–ãƒ©ã‚¦ã‚¶ã®æ¥ç¶šãŒåˆ‡æ–­ã•ã‚ŒãŸå ´åˆã®å‡¦ç†
 					console.log('client connection is closed.['
 							+ webBrowser.wid + ']');
 					webClients[webBrowser.wid] = "";
@@ -95,7 +95,7 @@ function doProxy(wsclient) {
 				});
 
 		webBrowser.on('error', function(err) {
-			// ƒuƒ‰ƒEƒU‚ÌÚ‘±‚ªØ’f‚³‚ê‚½ê‡‚Ìˆ—
+			// ãƒ–ãƒ©ã‚¦ã‚¶ã®æ¥ç¶šãŒåˆ‡æ–­ã•ã‚ŒãŸå ´åˆã®å‡¦ç†
 			console.log('client err[' + webBrowser.wid + '].' + err);
 			webClients[webBrowser.wid] = "";
 
@@ -111,7 +111,7 @@ function doProxy(wsclient) {
 	});
 
 	wsclient.on('wstohttp', function(data) {
-		// WebSocket‚©‚ç‚Ì‰“š‚ğƒuƒ‰ƒEƒU‚É•Ô‚·B
+		// WebSocketã‹ã‚‰ã®å¿œç­”ã‚’ãƒ–ãƒ©ã‚¦ã‚¶ã«è¿”ã™ã€‚
 		if (webClients[data['wid']] == "") {
 			console.log('web client connection has been closed.');
 			wsclient.emit('httpend', {
@@ -119,7 +119,7 @@ function doProxy(wsclient) {
 			});
 			return;
 		}
-		// WebSocketŒo—R‚ÅŒ‹‰ÊóæABase64ƒfƒR[ƒh‚µ‚Äƒuƒ‰ƒEƒU‚É•Ô‚·B
+		// WebSocketçµŒç”±ã§çµæœå—å–ã€Base64ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦ãƒ–ãƒ©ã‚¦ã‚¶ã«è¿”ã™ã€‚
 		console.log('server send data : [' + data['wid'] + "]");
 		var a = new Buffer(data['httpdata'].toString(), 'base64');
 		var clientSocket = webClients[data['wid']];
@@ -131,7 +131,7 @@ function doProxy(wsclient) {
 
 	wsclient.on('httpend', function(data) {
 		console.log("server is closed.[" + data['wid'] + "]");
-		// HttpProxyæ‚ÅƒRƒlƒNƒVƒ‡ƒ“‚ªØ‚ê‚½‚çA‚±‚¿‚ç‚àƒNƒ‰ƒCƒAƒ“ƒg‚ğØ’f
+		// HttpProxyå…ˆã§ã‚³ãƒã‚¯ã‚·ãƒ§ãƒ³ãŒåˆ‡ã‚ŒãŸã‚‰ã€ã“ã¡ã‚‰ã‚‚ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚’åˆ‡æ–­
 		var clientSocket = webClients[data['wid']];
 		console.log("clientSocket = "+clientSocket);
 		if (clientSocket == "") {
@@ -153,7 +153,7 @@ function doProxy(wsclient) {
 
 function dumpResponse(buf) {
 	var tmp = "";
-	// •\¦‚Å‚«‚é•¶š‚Í•\¦‚·‚é
+	// è¡¨ç¤ºã§ãã‚‹æ–‡å­—ã¯è¡¨ç¤ºã™ã‚‹
 	for ( var i = 0; i < buf.length; i++) {
 		var c = buf.readUInt8(i);
 		if ((c > 31 && c < 127) || c == 13 || c == 10) {

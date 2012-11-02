@@ -1,6 +1,6 @@
 // myporxy0.js
 
-// —áŠO‚ª”­¶‚µ‚Ä‚àƒT[ƒrƒX‚ğ’â~‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+// ä¾‹å¤–ãŒç™ºç”Ÿã—ã¦ã‚‚ã‚µãƒ¼ãƒ“ã‚¹ã‚’åœæ­¢ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 process.on('uncaughtException', function(err) {
 	console.log(err.stack);
 });
@@ -18,7 +18,7 @@ var server = net.createServer(function(c) {
 	c.on('data', function(data) {
 		c.pause();
 		//if (socket == "") {
-		// ƒ\ƒPƒbƒg‚ª–¢ì¬‚Ìê‡AHTTP—v‹‚Æ‚İ‚È‚µ‰ğÍ‚·‚éB
+		// ã‚½ã‚±ãƒƒãƒˆãŒæœªä½œæˆã®å ´åˆã€HTTPè¦æ±‚ã¨ã¿ãªã—è§£æã™ã‚‹ã€‚
 
 		var parseheader = data.toString().split(/\n/);
 		if (parseheader[0].match(/^GET/) || parseheader[0].match(/^CONNECT/)
@@ -28,7 +28,7 @@ var server = net.createServer(function(c) {
 			var destPort = "";
 			var destHost = "";
 			if (parseheader[0].match(/^CONNECT/)) {
-				// https‚Ìê‡‚Ìˆ—
+				// httpsã®å ´åˆã®å‡¦ç†
 				// hostname:port
 				var parseheader = data.toString().split(/\n/);
 				var hthead = parseheader[0].split(/ /);
@@ -38,7 +38,7 @@ var server = net.createServer(function(c) {
 				destPort = tmp[1];
 
 			} else {
-				// GET,POST‚Ìê‡‚Ìˆ—
+				// GET,POSTã®å ´åˆã®å‡¦ç†
 				destPort = url.parse(hthead[1]).port || 80;
 				destHost = url.parse(hthead[1]).host;
 			}
@@ -94,7 +94,7 @@ var server = net.createServer(function(c) {
 				c.end();
 			});
 			//} else {
-				// Šù‚ÉÚ‘±Ï‚İ‚Ìƒ\ƒPƒbƒg‚É‘Î‚µ‚Ä‚ÌHTTP—v‹‚Ìê‡
+				// æ—¢ã«æ¥ç¶šæ¸ˆã¿ã®ã‚½ã‚±ãƒƒãƒˆã«å¯¾ã—ã¦ã®HTTPè¦æ±‚ã®å ´åˆ
 			//	console.log("socket has made! ");
 			//}
 		} else {
@@ -153,7 +153,7 @@ var server = net.createServer(function(c) {
 	});
 });
 
-// httpsÚ‘±
+// httpsæ¥ç¶š
 function doConnect(client, data) {
 	var parseheader = data.toString().split(/\n/);
 	var hthead = parseheader[0].split(/ /);
@@ -235,7 +235,7 @@ sys.puts('Server listening on port ' + port);
 
 function dumpResponse(buf) {
 	var tmp = "";
-	// •\¦‚Å‚«‚é•¶š‚Í•\¦‚·‚é
+	// è¡¨ç¤ºã§ãã‚‹æ–‡å­—ã¯è¡¨ç¤ºã™ã‚‹
 	for ( var i = 0; i < buf.length; i++) {
 		var c = buf.readUInt8(i);
 		if ((c > 31 && c < 127) || c == 13 || c == 10) {

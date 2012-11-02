@@ -3,6 +3,7 @@ encoding/README.md=UTF-8
 encoding/index.html=UTF-8
 encoding/lanstart.rb=UTF-8
 encoding/myproxy.js=shift-jis
+encoding/myproxy0.js=UTF-8
 encoding/myproxy2.js=shift-jis
 encoding/myproxy3.js=shift-jis
 encoding/myproxy4.js=UTF-8
