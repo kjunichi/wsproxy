@@ -1,8 +1,17 @@
 // ws2http.js
-// WebSocket‚Åó‚¯‚½—v‹‚ğHttpProxy‚É“]‘—‚·‚éB
-// HttpProxy‚Åó‚¯‚½‰“š‚ğWebSocket‚É“]‘—‚·‚éB
+// WebSocketã§å—ã‘ãŸè¦æ±‚ã‚’HttpProxyã«è»¢é€ã™ã‚‹ã€‚
+// HttpProxyã§å—ã‘ãŸå¿œç­”ã‚’WebSocketã«è»¢é€ã™ã‚‹ã€‚
 
-// —áŠO‚ª”­¶‚µ‚Ä‚àƒT[ƒrƒX‚ğ’â~‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+// iPhone4Sã‹ã‚‰ã®WebSocketã‚’å¾…ã¡å—ã‘ã‚‹ãƒãƒ¼ãƒˆ
+var WEB_SOCKET_PORT = 8123;
+
+// ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒƒãƒˆã«ã¤ãªãŒã£ã¦ã„ã‚‹HTTPãƒ—ãƒ­ã‚­ã‚·ã®ãƒ›ã‚¹ãƒˆå
+var HTTP_PROXY_HOST = "127.0.0.1";
+
+// ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒƒãƒˆã«ã¤ãªãŒã£ã¦ã„ã‚‹HTTPãƒ—ãƒ­ã‚­ã‚·ã®ãƒãƒ¼ãƒˆç•ªå·
+var HTTP_PROXY_HOST = 8080;
+
+// ä¾‹å¤–ãŒç™ºç”Ÿã—ã¦ã‚‚ã‚µãƒ¼ãƒ“ã‚¹ã‚’åœæ­¢ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 process.on('uncaughtException', function(err) {
 	console.log(err.stack);
 });
@@ -12,7 +21,7 @@ var app = require('http').createServer(handler), io = require('socket.io')
 
 var net = require('net');
 
-app.listen(8123);
+app.listen(WEB_SOCKET_PORT);
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function(err, data) {
@@ -28,7 +37,7 @@ function handler(req, res) {
 
 io.sockets.on('connection', function(socket) {
 	var isProxyClose = true;
-	// HTTP ProxyƒT[ƒo‚ÖÚ‘±‚·‚éB
+	// HTTP Proxyã‚µãƒ¼ãƒã¸æ¥ç¶šã™ã‚‹ã€‚
 	doProxyProc(socket, isProxyClose);
 });
 
@@ -41,13 +50,13 @@ function doProxyProc(socket, isProxyClose) {
 		console.log("from client : " + data);
 		console.log("proxys at " + data['wid'] + " is " + proxys[data['wid']]);
 		if (proxys[data['wid']] == undefined) {
-			var proxy = net.createConnection(8080, '127.0.0.1', function() {
+			var proxy = net.createConnection(HTTP_PROXY_PORT, HTTP_PROY_HOST, function() {
 				proxys[data['wid']] = proxy;
 				proxy.wid = data['wid'];
-				// WebSocket‚Åƒf[ƒ^‚ğó‚¯‚½‚çHttpProxy‚ÉÚ‘±‚·‚é
+				// WebSocketã§ãƒ‡ãƒ¼ã‚¿ã‚’å—ã‘ãŸã‚‰HttpProxyã«æ¥ç¶šã™ã‚‹
 				proxy.pause();
 
-				// base64ƒfƒR[ƒh‚µ‚ÄproxyƒT[ƒo‚É‘—‚é
+				// base64ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦proxyã‚µãƒ¼ãƒã«é€ã‚‹
 				var a = new Buffer(data['httpdata'].toString(), 'base64');
 				wid = data['wid'];
 
@@ -57,11 +66,11 @@ function doProxyProc(socket, isProxyClose) {
 			});
 
 			proxy.on('data', function(pdata) {
-				// HttpProxy‚©‚ç‚Ì‰“š‚ğWebSocket‚É“]‘—‚·‚éB
+				// HttpProxyã‹ã‚‰ã®å¿œç­”ã‚’WebSocketã«è»¢é€ã™ã‚‹ã€‚
 
 				proxy.pause();
 
-				// WebSocket‚ÅHttpProxy‚©‚ç‚Ì‰“š‚ğBase64ƒGƒ“ƒR[ƒh‚µ‚Ä•Ô‚·B
+				// WebSocketã§HttpProxyã‹ã‚‰ã®å¿œç­”ã‚’Base64ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã—ã¦è¿”ã™ã€‚
 				socket.emit('httptows', {
 					httpdata : pdata.toString('base64'),
 					wid : proxy.wid
@@ -79,7 +88,7 @@ function doProxyProc(socket, isProxyClose) {
 			});
 
 			proxy.on('close', function() {
-				// HttpProxy‚©‚çØ’f‚³‚ê‚½ê‡‚Ìˆ—
+				// HttpProxyã‹ã‚‰åˆ‡æ–­ã•ã‚ŒãŸå ´åˆã®å‡¦ç†
 				console.log('server close![' + proxy.wid + "]");
 				socket.emit('httpend', {
 					wid : proxy.wid
@@ -96,7 +105,7 @@ function doProxyProc(socket, isProxyClose) {
 		} else {
 			console.log("from client : " + data);
 			
-			// Šù‚ÉÚ‘±Ï‚İ‚ÌHttpProxy‚Ö‚ÌSocket‚ğ—˜—p‚·‚éB
+			// æ—¢ã«æ¥ç¶šæ¸ˆã¿ã®HttpProxyã¸ã®Socketã‚’åˆ©ç”¨ã™ã‚‹ã€‚
 			var workProxy = proxys[data['wid']];
 			if (workProxy == "") {
 				console.log("proxy has been closed.");
@@ -127,7 +136,7 @@ function doProxyProc(socket, isProxyClose) {
 
 function dumpString(str) {
 	var tmp = "";
-	// •\¦‚Å‚«‚é•¶š‚Í•\¦‚·‚é
+	// è¡¨ç¤ºã§ãã‚‹æ–‡å­—ã¯è¡¨ç¤ºã™ã‚‹
 	for ( var i = 0; i < str.length; i++) {
 		var c = str.charAt(i);
 		if ((c > 31 && c < 127) || c == 13 || c == 10) {
@@ -141,7 +150,7 @@ function dumpString(str) {
 
 function dumpResponse(buf) {
 	var tmp = "";
-	// •\¦‚Å‚«‚é•¶š‚Í•\¦‚·‚é
+	// è¡¨ç¤ºã§ãã‚‹æ–‡å­—ã¯è¡¨ç¤ºã™ã‚‹
 	for ( var i = 0; i < buf.length; i++) {
 		var c = buf.readUInt8(i);
 		if ((c > 31 && c < 127) || c == 13 || c == 10) {

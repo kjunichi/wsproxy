@@ -2,6 +2,9 @@
 // HttpProxyとして要求を受けて、WebSocketにして要求を転送する。
 // WebSocketから応答を受けて、HttpProxyに転送する。
 
+var WEB_SOCKET_PORT = 8001;
+var HTTP_PROXY_PORT = 8081;
+
 // 例外が発生してもサービスを停止しないようにする
 process.on('uncaughtException', function(err) {
 	console.log(err.stack);
@@ -10,7 +13,7 @@ process.on('uncaughtException', function(err) {
 var app = require('http').createServer(handler), io = require('socket.io')
 		.listen(app), fs = require('fs')
 
-app.listen(8001);
+app.listen(WEB_SOCKET_PORT);
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function(err, data) {
@@ -40,7 +43,7 @@ io.sockets.on('connection', function(wsclient) {
 
 function doProxy(wsclient) {
 	// HttpProxyを開始する。
-	var port = 8081;
+
 	var sys = require('util');
 	var net = require('net');
 
@@ -106,7 +109,7 @@ function doProxy(wsclient) {
 
 	}); // server
 
-	server.listen(port, function() { //'listening' listener
+	server.listen(HTTP_PROXY_PORT, function() { //'listening' listener
 		console.log('server bound');
 	});
 
@@ -148,7 +151,7 @@ function doProxy(wsclient) {
 		//clientSocket.end();
 	});
 
-	sys.puts('Server listening on port ' + port);
+	sys.puts('Server listening on port ' + HTTP_PROXY_PORT);
 }
 
 function dumpResponse(buf) {

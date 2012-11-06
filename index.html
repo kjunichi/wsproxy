@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no"> 
+<meta http-equiv="Content-Type"content="text/html;charset=UTF-8">
+<script src="/socket.io/socket.io.js"></script>
+<script>
+function startLanProxy() {
+var wanUrl = 'http://' + document.getElementById("wanIpAddress").value
++':'+document.getElementById("wanPort").value;
+
+var lanUrl = 'http://' + document.getElementById("lanIpAddress").value
++':'+document.getElementById("lanPort").value;
+
+// フロント側のHttpProxyサーバから
+	var socket = io.connect(lanUrl);
+        
+    // WS->HttpProxyサーバ
+    var proxy = io.connect(wanUrl);
+    
+  	socket.on('httptows', function (data) {
+    	console.log("to proxy : " + data);
+    	proxy.emit('wstohttp', data);
+  	});
+  
+  	// WS->HttpProxyサーバからの応答
+  	proxy.on('httptows', function (data) {
+        console.log("from proxy : " + data);
+        socket.emit('wstohttp', data );
+  	});
+  
+  	// WS->HttpProxyサーバからの応答(切断)
+  	proxy.on('httpend', function (data) {
+    	console.log("from proxy end ");
+        socket.emit('httpend', data );
+	});
+  
+  
+  	proxy.on('end', function (data) {
+    	proxy = io.connect('');
+  	});
+  	socket.on('end', function (data) {
+    	socket = io.connect(lanUrl);
+  	});
+  	
+  	//socket.on('disconnect' function() {
+  	//	console.log("client close");
+  	//});
+  	//proxy.on('disconnect', function() {
+  	//	console.log("proxy close");
+  	//});
+  	console.log("start!");
+  	console.log("wanIpAddress = " + wanIpAddress);
+}
+</script>
+</head>
+<body>
+<label>接続先のWAN側のWebSocketProxyのIPアドレス</label>
+<input type="text" id="wanIpAddress">
+<br>
+<label>接続先のWAN側のポート番号</label>
+<input type="text" id="wanPort">
+<br>
+<label>LAN側のクライアントに設定するHttpProxyのIPアドレス</label>
+<input type="text" id="lanIpAddress" value="192.168.0.1">
+<br>
+<label>LAN側のWebSocketのポート番号</label>
+<input type="text" id="lanPort" value="8001">
+
+<button onClick="startLanProxy();">start</button>
+</body>
+</html>
