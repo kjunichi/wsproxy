@@ -4,6 +4,8 @@ http://kjunichi.cocolog-nifty.com/misc/2012/04/ipad-wifiiphone.html
 
 iPad Wifi版とiPhone4Sアドホック接続し、iPhone4Sの３G回線を経由してネットにアクセスできるようにします。
 
+node.jsを周回遅れで始めた際に、勉強がてら実装を始めてみたわけで。
+
 #システム構成
 ## LAN側
 iPad <-(http)- > PC1[node.js] <-(websocket)-> iPhone4S <-(websocket)-> 3G回線
