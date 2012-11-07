@@ -34,7 +34,6 @@ var lanUrl = 'http://' + document.getElementById("lanIpAddress").value
         socket.emit('httpend', data );
 	});
   
-  
   	proxy.on('end', function (data) {
     	proxy = io.connect('');
   	});
@@ -42,12 +41,6 @@ var lanUrl = 'http://' + document.getElementById("lanIpAddress").value
     	socket = io.connect(lanUrl);
   	});
   	
-  	//socket.on('disconnect' function() {
-  	//	console.log("client close");
-  	//});
-  	//proxy.on('disconnect', function() {
-  	//	console.log("proxy close");
-  	//});
   	console.log("start!");
   	console.log("wanIpAddress = " + wanIpAddress);
 }
