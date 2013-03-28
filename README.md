@@ -40,4 +40,4 @@ WAN側で動かすWebSocketを受信してHTTPに変換してWAN側のHTTP Proxy
 iPhone4Sに返す
 
 ## myproxy0.js
-WAN側で動かすHTTP Proxy.Squidとかのほうが良いと思う。
+WAN側で動かすHTTP Proxy。Squidとかのほうが良いと思う。
