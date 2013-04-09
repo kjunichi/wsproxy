@@ -9,7 +9,7 @@ var WEB_SOCKET_PORT = 8123;
 var HTTP_PROXY_HOST = "127.0.0.1";
 
 // インターネットにつながっているHTTPプロキシのポート番号
-var HTTP_PROXY_HOST = 8080;
+var HTTP_PROXY_PORT = 8080;
 
 // 例外が発生してもサービスを停止しないようにする
 process.on('uncaughtException', function(err) {
@@ -50,7 +50,7 @@ function doProxyProc(socket, isProxyClose) {
 		console.log("from client : " + data);
 		console.log("proxys at " + data['wid'] + " is " + proxys[data['wid']]);
 		if (proxys[data['wid']] == undefined) {
-			var proxy = net.createConnection(HTTP_PROXY_PORT, HTTP_PROY_HOST, function() {
+			var proxy = net.createConnection(HTTP_PROXY_PORT, HTTP_PROXY_PORT, function() {
 				proxys[data['wid']] = proxy;
 				proxy.wid = data['wid'];
 				// WebSocketでデータを受けたらHttpProxyに接続する
