@@ -7,6 +7,9 @@ iPad Wifi版とiPhone4Sアドホック接続し、iPhone4Sの３G回線を経由
 node.jsを周回遅れで始めた際に、勉強がてら実装を始めてみたわけで。
 
 #システム構成
+## イメージ
+![構成イメージ](http://kjunichi.cocolog-nifty.com/misc/images/2012/05/11/img_0110jpg_2.jpg)
+
 ## LAN側
 iPad <-(http)- > PC1[node.js] <-(websocket)-> iPhone4S <-(websocket)-> 3G回線
 
