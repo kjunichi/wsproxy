@@ -11,7 +11,7 @@ process.on('uncaughtException', function(err) {
 });
 
 var app = require('http').createServer(handler), io = require('socket.io')
-		.listen(app), fs = require('fs')
+		.listen(app), fs = require('fs'),uuid=require('node-uuid');
 
 app.listen(WEB_SOCKET_PORT);
 
@@ -30,14 +30,19 @@ function handler(req, res) {
 var myWsClient = {};
 var count = 0;
 var webClients = {};
+var httpProxyServer;
 
 io.sockets.on('connection', function(wsclient) {
 	myWsClient = wsclient;
 	console.log("HTTP Proxy start");
-	var server = doProxy(wsclient);
+if(httpProxyServer) {
+ // close
+	httpProxyServer.close();
+}
+	httpProxyServer = doProxy(wsclient);
 	wsclient.on('end', function() {
 		console.log("HTTP Proxy end");
-		server.close();
+		httpProxyServer.close();
 	});
 });
 
@@ -50,8 +55,9 @@ function doProxy(wsclient) {
 	var server = net.createServer(function(webBrowser) {
 		count++;
 		// 接続してきたブラウザのソケットを保持する。
-		webClients[count] = webBrowser;
-		webBrowser.wid = count;
+		var wid = uuid.v4();
+		webClients[wid] = webBrowser;
+		webBrowser.wid = wid;
 
 		console.log('web client connected [' + count + "]");
 
@@ -152,6 +158,7 @@ function doProxy(wsclient) {
 	});
 
 	sys.puts('Server listening on port ' + HTTP_PROXY_PORT);
+	return server;
 }
 
 function dumpResponse(buf) {
